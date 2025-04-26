@@ -1,6 +1,6 @@
 Team,NRFI_Batting_Rate,NRFI_Pitching_Rate,NRFI_Overall_Probability
 Kansas City Royals,71.43,92.86,66.33
-New York Mets,73.08,88.46,64.65
+New York Mets,74.07,88.89,65.84
 Houston Astros,84.0,76.0,63.84
 Pittsburgh Pirates,74.07,85.19,63.1
 St. Louis Cardinals,82.14,71.43,58.67
@@ -9,9 +9,9 @@ Chicago Cubs,73.08,76.92,56.21
 Cincinnati Reds,70.37,77.78,54.73
 Texas Rangers,70.37,77.78,54.73
 Miami Marlins,73.08,73.08,53.41
+Washington Nationals,67.86,78.57,53.32
 Colorado Rockies,82.14,64.29,52.81
 Philadelphia Phillies,66.67,77.78,51.86
-Washington Nationals,66.67,77.78,51.86
 Detroit Tigers,66.67,77.78,51.86
 Tampa Bay Rays,76.92,65.38,50.29
 San Francisco Giants,75.0,64.29,48.22

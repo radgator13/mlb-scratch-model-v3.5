@@ -2,16 +2,6 @@
 .vs/
 
 # Ignore data files and temp
-/data/mlb_boxscores_full.csv
-/data/mlb_nrfi_predictions.csv
-/data/mlb_nrfi_results.csv
-/data/mlb_nrfi_results_confident.csv
-/data/mlb_nrfi_results_full.csv
-/data/team_nrfi_stats.csv
-/data/team_nrfi_stats_pretty.csv
-/data/team_f5_stats.csv
-/data/rotowire_projstarters.csv
-/data/rotowire_projstarters_cleaned.csv
 
 # Python cache
 __pycache__/

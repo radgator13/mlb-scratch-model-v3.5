@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.py" />
+    <Compile Include="app_model_lgbm_test.py" />
+    <Compile Include="app_model_rf_test.py" />
+    <Compile Include="app_model_test.py" />
     <Compile Include="build_nrfi_results.py" />
     <Compile Include="build_stats.py" />
     <Compile Include="get_scores_full.py" />
@@ -29,6 +32,9 @@
     <Compile Include="normalize_rotowire_pitcher_data.py" />
     <Compile Include="refresh_data.py" />
     <Compile Include="ScratchModelV3_5.py" />
+    <Compile Include="train_model.py" />
+    <Compile Include="train_nrfi_model_lgbm.py" />
+    <Compile Include="train_nrfi_model_rf.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="data\" />
@@ -36,6 +42,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="data\rotowire_projstarters.csv" />
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
