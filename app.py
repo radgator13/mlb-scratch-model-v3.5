@@ -47,11 +47,11 @@ if 'Predicted_NRFI_Probability' in pred_df.columns:
 if 'Predicted_NRFI_Probability' in results_df.columns:
     results_df['Fireball_Rating'] = results_df['Predicted_NRFI_Probability'].apply(assign_fireball)
 
-# Merge predictions with actuals
+# Merge predictions with actuals -- ✅ LEFT JOIN to allow future games
 df = pred_df.merge(
     results_df[['Game Date', 'Away Team', 'Home Team', 'Actual_1st_Inning_Runs', 'Prediction_Result']],
     on=['Game Date', 'Away Team', 'Home Team'],
-    how='inner'
+    how='left'   # ✅ left join to keep future games
 )
 
 # Predict using Logistic Regression model
@@ -60,6 +60,10 @@ df['Model_Prediction'] = model.predict(df[features])
 
 # Human-readable model result
 df['Model_Prediction_Result'] = df['Model_Prediction'].apply(lambda x: "✅ HIT" if x == 1 else "❌ MISS")
+
+# Fill missing Actual 1st inning runs and Prediction Result for future games
+df['Actual_1st_Inning_Runs'] = df['Actual_1st_Inning_Runs'].fillna("Pending")
+df['Prediction_Result'] = df['Prediction_Result'].fillna("Pending")
 
 # Title
 st.title("⚾ MLB NRFI Predictions Dashboard (Logistic Regression Model)")

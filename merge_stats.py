@@ -23,17 +23,17 @@ games = games.merge(
     how='left'
 ).rename(columns={"NRFI_Pitching_Rate": "Home_NRFI_Pitching_Rate"}).drop(columns=["Team"])
 
-# 🔥 FIX missing values
-games['Away_NRFI_Batting_Rate'] = games['Away_NRFI_Batting_Rate'].fillna(50.0)  # Neutral if missing
-games['Home_NRFI_Pitching_Rate'] = games['Home_NRFI_Pitching_Rate'].fillna(50.0)  # Neutral if missing
+# Fill any missing batting or pitching NRFI rates with 50% neutral if stats missing
+games['Away_NRFI_Batting_Rate'] = games['Away_NRFI_Batting_Rate'].fillna(50.0)
+games['Home_NRFI_Pitching_Rate'] = games['Home_NRFI_Pitching_Rate'].fillna(50.0)
 
-# Calculate Predicted NRFI %
+# Calculate Predicted NRFI Probability
 games['Predicted_NRFI_Probability'] = (games['Away_NRFI_Batting_Rate'] * games['Home_NRFI_Pitching_Rate']) / 100
 games['Predicted_NRFI_Probability'] = games['Predicted_NRFI_Probability'].round(2)
 
 # Save to CSV
 games.to_csv("data/mlb_nrfi_predictions.csv", index=False)
-print(f"✅ Saved NRFI-only predictions to: data/mlb_nrfi_predictions.csv")
+print(f"✅ Saved NRFI predictions for ALL games (including future scheduled) to: data/mlb_nrfi_predictions.csv")
 
 # Preview
 print("\n📊 NRFI Prediction Example:")
