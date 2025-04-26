@@ -33,49 +33,49 @@ def extract_boxscore(game_id, game_date):
 
     scores = soup.select("div.Gamestrip__Score")
     away_runs = scores[0].get_text(strip=True) if len(scores) > 0 else ""
-    home_runs = scores[1].get_text(strip=True) if len(scores) > 1 else ""
+    home_runs = scores[1].get_text(strip=True) if len(scores) > 0 else ""
 
     inning_data = {}
 
     try:
         linescore_table = soup.find("table", class_="Table Table--align-center")
         if not linescore_table:
-            print("❌ Linescore table not found.")
-            return None
+            print("⚠️ Linescore table not found. Proceeding with 'Pending' innings.")
+            inning_data = {f"Away {i}th": "Pending" for i in range(1, 10)}
+            inning_data.update({f"Home {i}th": "Pending" for i in range(1, 10)})
+        else:
+            header_row = linescore_table.find("thead").find("tr")
+            header_cells = header_row.find_all("th")
+            headers = [cell.text.strip() for cell in header_cells]
 
-        header_row = linescore_table.find("thead").find("tr")
-        header_cells = header_row.find_all("th")
-        headers = [cell.text.strip() for cell in header_cells]
+            rows = linescore_table.find("tbody").find_all("tr")
+            if len(rows) < 2:
+                print("⚠️ Not enough team rows in linescore. Marking innings 'Pending'.")
+                inning_data = {f"Away {i}th": "Pending" for i in range(1, 10)}
+                inning_data.update({f"Home {i}th": "Pending" for i in range(1, 10)})
+            else:
+                away_cells = rows[0].find_all("td")
+                home_cells = rows[1].find_all("td")
+                for inning in range(1, 10):
+                    try:
+                        inning_index = headers.index(str(inning))
+                        away_inning_score = away_cells[inning_index].text.strip()
+                        home_inning_score = home_cells[inning_index].text.strip()
 
-        rows = linescore_table.find("tbody").find_all("tr")
-        if len(rows) < 2:
-            print("⚠️ Not enough team rows in linescore.")
-            return None
-
-        away_cells = rows[0].find_all("td")
-        home_cells = rows[1].find_all("td")
-
-        for inning in range(1, 10):  # innings 1-9
-            try:
-                inning_index = headers.index(str(inning))
-
-                away_inning_score = away_cells[inning_index].text.strip()
-                home_inning_score = home_cells[inning_index].text.strip()
-
-                inning_data[f"Away {inning}th"] = int(away_inning_score) if away_inning_score.isdigit() else 0
-                inning_data[f"Home {inning}th"] = int(home_inning_score) if home_inning_score.isdigit() else 0
-            except ValueError:
-                # inning number not in header
-                inning_data[f"Away {inning}th"] = 0
-                inning_data[f"Home {inning}th"] = 0
-            except Exception as e:
-                print(f"⚠️ Error parsing inning {inning}: {e}")
+                        inning_data[f"Away {inning}th"] = int(away_inning_score) if away_inning_score.isdigit() else 0
+                        inning_data[f"Home {inning}th"] = int(home_inning_score) if home_inning_score.isdigit() else 0
+                    except ValueError:
+                        inning_data[f"Away {inning}th"] = "Pending"
+                        inning_data[f"Home {inning}th"] = "Pending"
+                    except Exception as e:
+                        print(f"⚠️ Error parsing inning {inning}: {e}")
+                        inning_data[f"Away {inning}th"] = "Pending"
+                        inning_data[f"Home {inning}th"] = "Pending"
     except Exception as e:
         print(f"⚠️ Error parsing inning data: {e}")
 
     print(f"✅ Parsed: {away_team} vs {home_team}")
 
-    # Build the full game dictionary
     game_row = {
         "Game Date": game_date,
         "Away Team": away_team,
@@ -85,13 +85,16 @@ def extract_boxscore(game_id, game_date):
         "Home Record": home_record,
         "Home Score": re.sub(r"\D", "", home_runs),
     }
-    game_row.update(inning_data)  # add all innings
+    game_row.update(inning_data)
 
     return game_row
 
 def scrape_range(start_date, end_date, output_file="data/mlb_boxscores_full.csv"):
+    # Force innings to be read as strings so "Pending" and 0.0 behave
+    dtype_spec = {f"{side} {i}th": str for i in range(1, 10) for side in ["Away", "Home"]}
+
     if os.path.exists(output_file):
-        existing_df = pd.read_csv(output_file)
+        existing_df = pd.read_csv(output_file, dtype=dtype_spec)
         print(f"📄 Found existing file with {len(existing_df)} rows.")
     else:
         existing_df = pd.DataFrame()
@@ -118,19 +121,30 @@ def scrape_range(start_date, end_date, output_file="data/mlb_boxscores_full.csv"
 
         if not existing_df.empty:
             merge_keys = ["Game Date", "Away Team", "Home Team"]
-            existing_df = existing_df[
-                ~existing_df[merge_keys].apply(tuple, axis=1).isin(
-                    new_df[merge_keys].apply(tuple, axis=1)
-                )
-            ]
+            existing_df.set_index(merge_keys, inplace=True)
+            new_df.set_index(merge_keys, inplace=True)
 
-        combined = pd.concat([existing_df, new_df], ignore_index=True)
+            combined = pd.concat([existing_df[~existing_df.index.isin(new_df.index)], new_df]).reset_index()
+        else:
+            combined = new_df.reset_index()
+
         combined.sort_values(by=["Game Date", "Home Team"], inplace=True)
 
-        # Optionally, recreate YRFI if needed
+        # Safely calculate YRFI
         if 'Away 1th' in combined.columns and 'Home 1th' in combined.columns:
-            combined['YRFI'] = ((combined['Away 1th'] + combined['Home 1th']) > 0).astype(int)
-            print("✅ YRFI column created based on 1st inning runs.")
+            mask = (
+                combined['Away 1th'].notna() & combined['Home 1th'].notna() &
+                (combined['Away 1th'] != "Pending") & (combined['Home 1th'] != "Pending")
+            )
+
+            combined.loc[mask, 'Away 1th'] = combined.loc[mask, 'Away 1th'].apply(lambda x: int(float(x)))
+            combined.loc[mask, 'Home 1th'] = combined.loc[mask, 'Home 1th'].apply(lambda x: int(float(x)))
+
+            combined.loc[mask, 'YRFI'] = (
+                (combined.loc[mask, 'Away 1th'] + combined.loc[mask, 'Home 1th']) > 0
+            ).astype(int)
+
+            print("✅ YRFI column created based on 1st inning runs (after cleaning types).")
         else:
             print("⚠️ Could not create YRFI column — missing 1st inning data.")
 
@@ -138,10 +152,6 @@ def scrape_range(start_date, end_date, output_file="data/mlb_boxscores_full.csv"
         print(f"\n✅ Updated and saved to {output_file} ({len(combined)} total rows)")
     else:
         print("ℹ️ No new games found to append.")
-
-
-
-
 
 if __name__ == "__main__":
     today = datetime.today()

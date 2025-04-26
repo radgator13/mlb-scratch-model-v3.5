@@ -16,11 +16,20 @@ if 'NRFI' not in df.columns:
 
 away_batting = df[['Away Team', 'Away 1th']].copy()
 away_batting['Team'] = away_batting['Away Team']
-away_batting['Scored'] = (away_batting['Away 1th'] > 0).astype(int)
+away_batting['Scored'] = (
+    away_batting['Away 1th']
+    .apply(lambda x: int(float(x)) if pd.notna(x) and x != "Pending" else 0)
+    > 0
+).astype(int)
+
 
 home_batting = df[['Home Team', 'Home 1th']].copy()
 home_batting['Team'] = home_batting['Home Team']
-home_batting['Scored'] = (home_batting['Home 1th'] > 0).astype(int)
+home_batting['Scored'] = (
+    home_batting['Home 1th']
+    .apply(lambda x: int(float(x)) if pd.notna(x) and x != "Pending" else 0)
+    > 0
+).astype(int)
 
 batting = pd.concat([away_batting[['Team', 'Scored']], home_batting[['Team', 'Scored']]])
 
@@ -38,12 +47,19 @@ batting_summary['NRFI_Batting_Rate'] = batting_summary['NRFI_Batting_Rate'].roun
 
 away_pitching = df[['Away Team', 'Home 1th']].copy()
 away_pitching['Team'] = away_pitching['Away Team']
-away_pitching['Allowed'] = (away_pitching['Home 1th'] > 0).astype(int)
+away_pitching['Allowed'] = (
+    away_pitching['Home 1th']
+    .apply(lambda x: int(float(x)) if pd.notna(x) and x != "Pending" else 0)
+    > 0
+).astype(int)
 
 home_pitching = df[['Home Team', 'Away 1th']].copy()
 home_pitching['Team'] = home_pitching['Home Team']
-home_pitching['Allowed'] = (home_pitching['Away 1th'] > 0).astype(int)
-
+home_pitching['Allowed'] = (
+    home_pitching['Away 1th']
+    .apply(lambda x: int(float(x)) if pd.notna(x) and x != "Pending" else 0)
+    > 0
+).astype(int)
 pitching = pd.concat([away_pitching[['Team', 'Allowed']], home_pitching[['Team', 'Allowed']]])
 
 pitching_summary = pitching.groupby('Team').agg(
