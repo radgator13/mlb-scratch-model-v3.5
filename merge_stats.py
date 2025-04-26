@@ -1,13 +1,8 @@
 ﻿import pandas as pd
-from datetime import datetime
 
 # Load needed data
 games_df = pd.read_csv("data/mlb_boxscores_full.csv")
 nrfi_stats = pd.read_csv("data/team_nrfi_stats_pretty.csv")
-
-# Filter games today and forward
-today = datetime.today().strftime('%Y-%m-%d')
-games_df = games_df[games_df['Game Date'] >= today]
 
 # Get matchups
 games = games_df[['Game Date', 'Away Team', 'Home Team']].drop_duplicates()
