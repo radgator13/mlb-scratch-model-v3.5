@@ -23,6 +23,10 @@ games = games.merge(
     how='left'
 ).rename(columns={"NRFI_Pitching_Rate": "Home_NRFI_Pitching_Rate"}).drop(columns=["Team"])
 
+# 🔥 FIX missing values
+games['Away_NRFI_Batting_Rate'] = games['Away_NRFI_Batting_Rate'].fillna(50.0)  # Neutral if missing
+games['Home_NRFI_Pitching_Rate'] = games['Home_NRFI_Pitching_Rate'].fillna(50.0)  # Neutral if missing
+
 # Calculate Predicted NRFI %
 games['Predicted_NRFI_Probability'] = (games['Away_NRFI_Batting_Rate'] * games['Home_NRFI_Pitching_Rate']) / 100
 games['Predicted_NRFI_Probability'] = games['Predicted_NRFI_Probability'].round(2)
