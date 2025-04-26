@@ -1,0 +1,23 @@
+Game Date,Away Team,Home Team,Away_NRFI_Batting_Rate,Home_NRFI_Pitching_Rate,Predicted_NRFI_Probability,Away 1th,Home 1th,Actual_1st_Inning_Runs,Prediction_Result
+2025-03-27,Milwaukee Brewers,New York Yankees,82.14,81.48,66.93,0.0,1.0,1.0,❌ MISS
+2025-03-29,Milwaukee Brewers,New York Yankees,82.14,81.48,66.93,0.0,4.0,4.0,❌ MISS
+2025-03-30,Milwaukee Brewers,New York Yankees,82.14,81.48,66.93,1.0,2.0,3.0,❌ MISS
+2025-04-04,Toronto Blue Jays,New York Mets,75.0,88.46,66.34,0.0,2.0,2.0,❌ MISS
+2025-04-05,Toronto Blue Jays,New York Mets,75.0,88.46,66.34,0.0,0.0,0.0,✅ HIT
+2025-04-06,Toronto Blue Jays,New York Mets,75.0,88.46,66.34,0.0,0.0,0.0,✅ HIT
+2025-04-07,Minnesota Twins,Kansas City Royals,70.37,92.86,65.35,0.0,1.0,1.0,❌ MISS
+2025-04-07,St. Louis Cardinals,Pittsburgh Pirates,82.14,85.19,69.98,0.0,1.0,1.0,❌ MISS
+2025-04-08,Minnesota Twins,Kansas City Royals,70.37,92.86,65.35,0.0,0.0,0.0,✅ HIT
+2025-04-08,St. Louis Cardinals,Pittsburgh Pirates,82.14,85.19,69.98,0.0,0.0,0.0,✅ HIT
+2025-04-09,Minnesota Twins,Kansas City Royals,70.37,92.86,65.35,0.0,0.0,0.0,✅ HIT
+2025-04-09,St. Louis Cardinals,Pittsburgh Pirates,82.14,85.19,69.98,0.0,0.0,0.0,✅ HIT
+2025-04-10,Minnesota Twins,Kansas City Royals,70.37,92.86,65.35,0.0,1.0,1.0,❌ MISS
+2025-04-17,St. Louis Cardinals,New York Mets,82.14,88.46,72.66,0.0,0.0,0.0,✅ HIT
+2025-04-18,St. Louis Cardinals,New York Mets,82.14,88.46,72.66,0.0,0.0,0.0,✅ HIT
+2025-04-19,St. Louis Cardinals,New York Mets,82.14,88.46,72.66,0.0,0.0,0.0,✅ HIT
+2025-04-20,St. Louis Cardinals,New York Mets,82.14,88.46,72.66,0.0,1.0,1.0,❌ MISS
+2025-04-22,Colorado Rockies,Kansas City Royals,81.48,92.86,75.66,0.0,0.0,0.0,✅ HIT
+2025-04-23,Colorado Rockies,Kansas City Royals,81.48,92.86,75.66,,,0.0,✅ HIT
+2025-04-24,Colorado Rockies,Kansas City Royals,81.48,92.86,75.66,1.0,2.0,3.0,❌ MISS
+2025-04-24,Colorado Rockies,Kansas City Royals,81.48,92.86,75.66,0.0,0.0,0.0,✅ HIT
+2025-04-25,Houston Astros,Kansas City Royals,84.0,92.86,78.0,0.0,0.0,0.0,✅ HIT
