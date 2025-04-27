@@ -2,9 +2,8 @@
 import pandas as pd
 import joblib
 from datetime import datetime
-import os
 
-# Set Streamlit page config to wide
+# Set Streamlit page config
 st.set_page_config(page_title="MLB NRFI Dashboard", layout="wide")
 
 # Load Data
@@ -25,7 +24,7 @@ pred_df = load_predictions()
 results_df = load_results()
 model = load_model()
 
-# 🔥 Helper function to assign Fireball Rating
+# 🔥 Helper: Fireball Rating
 def assign_fireball(prob):
     if prob >= 70:
         return "🔥🔥🔥🔥🔥"
@@ -40,30 +39,27 @@ def assign_fireball(prob):
     else:
         return "no value"
 
-# Apply Fireball Rating (still based on manual Predicted NRFI %)
+# Assign Fireball Rating
 if 'Predicted_NRFI_Probability' in pred_df.columns:
     pred_df['Fireball_Rating'] = pred_df['Predicted_NRFI_Probability'].apply(assign_fireball)
 
-if 'Predicted_NRFI_Probability' in results_df.columns:
-    results_df['Fireball_Rating'] = results_df['Predicted_NRFI_Probability'].apply(assign_fireball)
-
-# Merge predictions with actuals -- ✅ LEFT JOIN to allow future games
+# Merge predictions with actual results
 df = pred_df.merge(
     results_df[['Game Date', 'Away Team', 'Home Team', 'Actual_1st_Inning_Runs', 'Prediction_Result']],
     on=['Game Date', 'Away Team', 'Home Team'],
-    how='left'   # ✅ left join to keep future games
+    how='left'
 )
 
 # Predict using Logistic Regression model
 features = ['Predicted_NRFI_Probability', 'Away_NRFI_Batting_Rate', 'Home_NRFI_Pitching_Rate']
 df['Model_Prediction'] = model.predict(df[features])
-
-# Human-readable model result
 df['Model_Prediction_Result'] = df['Model_Prediction'].apply(lambda x: "✅ HIT" if x == 1 else "❌ MISS")
 
-# Fill missing Actual 1st inning runs and Prediction Result for future games
-df['Actual_1st_Inning_Runs'] = df['Actual_1st_Inning_Runs'].fillna("Pending")
+# Only fill missing prediction results with "Pending"
 df['Prediction_Result'] = df['Prediction_Result'].fillna("Pending")
+
+# 🔥 IMPORTANT: Only use completed games for evaluation
+evaluation_df = df[df['Actual_1st_Inning_Runs'] != "Pending"]
 
 # Title
 st.title("⚾ MLB NRFI Predictions Dashboard (Logistic Regression Model)")
@@ -84,6 +80,7 @@ selected_date_str = selected_date.strftime('%Y-%m-%d')
 
 # Filter by selected date
 filtered_df = df[df['Game Date'] == selected_date_str]
+filtered_eval_df = evaluation_df[evaluation_df['Game Date'] == selected_date_str]
 
 # ------------------------------
 # 📋 Display Predictions
@@ -111,7 +108,7 @@ if view_option == "Predictions Only":
 elif view_option == "Predictions vs Actual Results":
     st.subheader(f"NRFI Predictions vs Actual for {selected_date_str}")
     st.dataframe(
-        filtered_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result', 'Actual_1st_Inning_Runs', 'Prediction_Result']]
+        filtered_eval_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result', 'Actual_1st_Inning_Runs', 'Prediction_Result']]
         .sort_values(by="Fireball_Rating", ascending=False),
         use_container_width=True
     )
@@ -125,22 +122,18 @@ st.subheader("📈 Daily Summary for Selected Date")
 
 if view_option == "Predictions vs Actual Results":
 
-    # Daily data
-    daily_total = len(filtered_df)
-    daily_hits = (filtered_df['Model_Prediction_Result'] == '✅ HIT').sum()
+    daily_total = len(filtered_eval_df)
+    daily_hits = (filtered_eval_df['Model_Prediction_Result'] == '✅ HIT').sum()
     daily_win_rate = (daily_hits / daily_total) * 100 if daily_total > 0 else 0
 
     st.write(f"**Daily Model Record:** {daily_hits} Wins / {daily_total - daily_hits} Losses ({daily_win_rate:.2f}% Win Rate)")
 
-    # Fireball breakdown (daily)
-    st.write("**Fireball Performance (Daily):**")
-    fireball_daily = filtered_df.groupby('Fireball_Rating').agg(
+    fireball_daily = filtered_eval_df.groupby('Fireball_Rating').agg(
         Total=('Model_Prediction_Result', 'count'),
         Wins=('Model_Prediction_Result', lambda x: (x == '✅ HIT').sum())
     )
     fireball_daily['Win %'] = (fireball_daily['Wins'] / fireball_daily['Total'] * 100).round(2)
 
-    # Sort Fireballs Correctly (daily)
     fireball_order = ["🔥🔥🔥🔥🔥", "🔥🔥🔥🔥", "🔥🔥🔥", "🔥🔥", "🔥", "no value"]
     fireball_daily = fireball_daily.reset_index()
     fireball_daily['Fireball_Rating'] = fireball_daily['Fireball_Rating'].astype(str)
@@ -158,23 +151,18 @@ st.subheader("📈 Cumulative Summary (All Days)")
 
 if view_option == "Predictions vs Actual Results":
 
-    cumulative_df = df[df['Game Date'] <= selected_date_str]
-
-    # Cumulative data
-    cumulative_total = len(cumulative_df)
-    cumulative_hits = (cumulative_df['Model_Prediction_Result'] == '✅ HIT').sum()
+    cumulative_total = len(evaluation_df)
+    cumulative_hits = (evaluation_df['Model_Prediction_Result'] == '✅ HIT').sum()
     cumulative_win_rate = (cumulative_hits / cumulative_total) * 100 if cumulative_total > 0 else 0
 
     st.write(f"**Cumulative Model Record:** {cumulative_hits} Wins / {cumulative_total - cumulative_hits} Losses ({cumulative_win_rate:.2f}% Win Rate)")
 
-    # Fireball breakdown (cumulative)
-    fireball_cumulative = cumulative_df.groupby('Fireball_Rating').agg(
+    fireball_cumulative = evaluation_df.groupby('Fireball_Rating').agg(
         Total=('Model_Prediction_Result', 'count'),
         Wins=('Model_Prediction_Result', lambda x: (x == '✅ HIT').sum())
     )
     fireball_cumulative['Win %'] = (fireball_cumulative['Wins'] / fireball_cumulative['Total'] * 100).round(2)
 
-    # Sort Fireballs Correctly (cumulative)
     fireball_cumulative = fireball_cumulative.reset_index()
     fireball_cumulative['Fireball_Rating'] = fireball_cumulative['Fireball_Rating'].astype(str)
     fireball_cumulative['SortOrder'] = fireball_cumulative['Fireball_Rating'].apply(lambda x: fireball_order.index(x) if x in fireball_order else len(fireball_order))
