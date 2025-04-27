@@ -192,7 +192,7 @@ if view_option == "Predictions vs Actual Results":
     st.dataframe(fireball_daily.style.applymap(highlight_confidence, subset=["Confidence_Label"]), use_container_width=True)
 
 # ------------------------------
-# 📊 CUMULATIVE SUMMARY (Fixed)
+# 📊 CUMULATIVE SUMMARY (Corrected + Smoothed Chart)
 # ------------------------------
 
 st.markdown("---")
@@ -200,64 +200,76 @@ st.subheader("📈 Cumulative Summary (All Days Up to Selected Date)")
 
 if view_option == "Predictions vs Actual Results":
 
-    # ✅ Only include games up to the selected date
+    selected_date_pd = pd.Timestamp(selected_date)
+
+    # ✅ Only include games up to selected date
     cumulative_df = evaluation_df[pd.to_datetime(evaluation_df['Game Date']) <= selected_date_pd]
 
-    cumulative_total = len(cumulative_df)
-    cumulative_hits = (cumulative_df['Prediction_Result'] == '✅ HIT').sum()
-    cumulative_win_rate = (cumulative_hits / cumulative_total) * 100 if cumulative_total > 0 else 0
+    if not cumulative_df.empty:
 
-    st.write(f"**Cumulative Model Record (Real Outcomes through {selected_date_str}):** {cumulative_hits} Wins / {cumulative_total - cumulative_hits} Losses ({cumulative_win_rate:.2f}% Win Rate)")
+        # Cumulative totals
+        cumulative_total = len(cumulative_df)
+        cumulative_hits = (cumulative_df['Prediction_Result'] == '✅ HIT').sum()
+        cumulative_win_rate = (cumulative_hits / cumulative_total) * 100 if cumulative_total > 0 else 0
 
-    fireball_cumulative = cumulative_df.groupby('Confidence_Label').agg(
-        Total=('Prediction_Result', 'count'),
-        Wins=('Prediction_Result', lambda x: (x == '✅ HIT').sum()),
-        Model_Hits=('Model_Correct', 'sum')
-    )
-    fireball_cumulative['Real Win %'] = (fireball_cumulative['Wins'] / fireball_cumulative['Total'] * 100).round(2)
-    fireball_cumulative['Model Hit %'] = (fireball_cumulative['Model_Hits'] / fireball_cumulative['Total'] * 100).round(2)
+        st.write(f"**Cumulative Model Record (Real Outcomes through {selected_date_str}):** {cumulative_hits} Wins / {cumulative_total - cumulative_hits} Losses ({cumulative_win_rate:.2f}% Win Rate)")
 
-    fireball_cumulative = fireball_cumulative.reset_index()
-    fireball_cumulative['Confidence_Label'] = pd.Categorical(fireball_cumulative['Confidence_Label'], categories=confidence_order, ordered=True)
-    fireball_cumulative = fireball_cumulative.sort_values(by='Confidence_Label')
+        # Group by Confidence Label
+        fireball_cumulative = cumulative_df.groupby('Confidence_Label').agg(
+            Total=('Prediction_Result', 'count'),
+            Wins=('Prediction_Result', lambda x: (x == '✅ HIT').sum()),
+            Model_Hits=('Model_Correct', 'sum')
+        )
+        fireball_cumulative['Real Win %'] = (fireball_cumulative['Wins'] / fireball_cumulative['Total'] * 100).round(2)
+        fireball_cumulative['Model Hit %'] = (fireball_cumulative['Model_Hits'] / fireball_cumulative['Total'] * 100).round(2)
 
-    st.dataframe(fireball_cumulative.style.applymap(highlight_confidence, subset=["Confidence_Label"]), use_container_width=True)
+        fireball_cumulative = fireball_cumulative.reset_index()
+        fireball_cumulative['Confidence_Label'] = pd.Categorical(fireball_cumulative['Confidence_Label'], categories=["Strong", "Medium", "Caution", "Weak"], ordered=True)
+        fireball_cumulative = fireball_cumulative.sort_values(by='Confidence_Label')
 
-    # ------------------------------
-# 📈 Cumulative Win % Chart (Dynamic Color + 60% Target Line)
-# ------------------------------
+        st.dataframe(fireball_cumulative.style.applymap(highlight_confidence, subset=["Confidence_Label"]), use_container_width=True)
 
-st.markdown("---")
-st.subheader("📈 Cumulative Win % Over Time (Target: 60%)")
+        # ------------------------------
+        # 📈 Cumulative Win % Chart
+        # ------------------------------
 
-if not cumulative_df.empty:
+        st.markdown("---")
+        st.subheader("📈 Cumulative Win % Over Time (Target: 60%)")
 
-    cumulative_df_sorted = cumulative_df.sort_values('Game Date')
-    cumulative_df_sorted['Game Date'] = pd.to_datetime(cumulative_df_sorted['Game Date'])
+        cumulative_df_sorted = cumulative_df.sort_values('Game Date')
+        cumulative_df_sorted['Game Date'] = pd.to_datetime(cumulative_df_sorted['Game Date'])
 
-    cumulative_df_sorted['Rolling Wins'] = (cumulative_df_sorted['Prediction_Result'] == '✅ HIT').cumsum()
-    cumulative_df_sorted['Rolling Games'] = range(1, len(cumulative_df_sorted) + 1)
-    cumulative_df_sorted['Rolling Win %'] = (cumulative_df_sorted['Rolling Wins'] / cumulative_df_sorted['Rolling Games']) * 100
+        cumulative_df_sorted['Rolling Wins'] = (cumulative_df_sorted['Prediction_Result'] == '✅ HIT').cumsum()
+        cumulative_df_sorted['Rolling Games'] = range(1, len(cumulative_df_sorted) + 1)
+        cumulative_df_sorted['Rolling Win %'] = (cumulative_df_sorted['Rolling Wins'] / cumulative_df_sorted['Rolling Games']) * 100
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    
-    # Choose color based on final cumulative % at latest game
-    final_cum_win = cumulative_df_sorted['Rolling Win %'].iloc[-1]
-    line_color = 'green' if final_cum_win >= 60 else 'red'
+        # ✅ 7-game moving average smoothing
+        cumulative_df_sorted['Smoothed Win %'] = cumulative_df_sorted['Rolling Win %'].rolling(window=7, min_periods=1).mean()
 
-    # Plot cumulative win %
-    ax.plot(cumulative_df_sorted['Game Date'], cumulative_df_sorted['Rolling Win %'], marker='o', color=line_color, label='Cumulative Win %')
+        fig, ax = plt.subplots(figsize=(10, 5))
 
-    # Add 60% Target Line
-    ax.axhline(y=60, color='blue', linestyle='--', label='Target 60% Win Rate')
+        final_cum_win = cumulative_df_sorted['Rolling Win %'].iloc[-1]
+        line_color = 'green' if final_cum_win >= 60 else 'red'
 
-    ax.set_xlabel('Game Date')
-    ax.set_ylabel('Cumulative Win %')
-    ax.set_title('Cumulative NRFI Model Win Rate Over Time')
-    ax.grid(True)
-    ax.legend()
+        # Plot raw Win % (lighter)
+        ax.plot(cumulative_df_sorted['Game Date'], cumulative_df_sorted['Rolling Win %'], marker='o', color=line_color, alpha=0.4, label='Raw Cumulative Win %')
 
-    st.pyplot(fig)
+        # Plot smoothed Win % (bold)
+        ax.plot(cumulative_df_sorted['Game Date'], cumulative_df_sorted['Smoothed Win %'], color=line_color, linewidth=3, label='Smoothed Win % (7 Games)')
+
+        # Add 60% Target Line
+        ax.axhline(y=60, color='blue', linestyle='--', label='Target 60% Win Rate')
+
+        ax.set_xlabel('Game Date')
+        ax.set_ylabel('Cumulative Win %')
+        ax.set_title('Cumulative NRFI Model Win Rate Over Time')
+        ax.grid(True)
+        ax.legend()
+
+        st.pyplot(fig)
+
+
+
 
 
 
