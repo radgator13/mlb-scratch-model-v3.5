@@ -7,6 +7,48 @@ import matplotlib.pyplot as plt
 # Set Streamlit page config
 st.set_page_config(page_title="MLB NRFI Dashboard", layout="wide")
 
+# ------------------------------
+# 🎨 Global Page Center Styling (FINAL FIX)
+# ------------------------------
+
+st.markdown(
+    """
+    <style>
+    /* Center everything inside the page */
+    [data-testid="stAppViewContainer"] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Center all titles, headers, markdowns */
+    h1, h2, h3, h4, h5, h6, p {
+        text-align: center;
+    }
+
+    /* Center all elements inside form blocks (inputs, pickers, etc.) */
+    [data-testid="stForm"] {
+        align-items: center;
+    }
+
+    /* Center table text */
+    .dataframe th, .dataframe td {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+
+
+
+
+
 # Load Data
 @st.cache_data
 def load_predictions():
@@ -136,6 +178,15 @@ if fireball_filter:
 
 if view_option == "Predictions Only":
     st.subheader(f"NRFI Predictions for {selected_date_str}")
+
+    # ✅ Fix Confidence_Label sorting here
+    confidence_order = ["Strong", "Medium", "Caution", "Weak"]
+    filtered_df['Confidence_Label'] = pd.Categorical(
+        filtered_df['Confidence_Label'],
+        categories=confidence_order,
+        ordered=True
+    )
+
     styled_df = filtered_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result', 'Confidence_Label']].sort_values(by="Confidence_Label", ascending=True)
     st.dataframe(
         styled_df.style.applymap(highlight_confidence, subset=["Confidence_Label"]),
@@ -155,11 +206,23 @@ if view_option == "Predictions Only":
 
 elif view_option == "Predictions vs Actual Results":
     st.subheader(f"NRFI Predictions vs Actual for {selected_date_str}")
+
+    # ✅ Fix Confidence_Label sorting first
+    confidence_order = ["Strong", "Medium", "Caution", "Weak"]
+    filtered_eval_df['Confidence_Label'] = pd.Categorical(
+        filtered_eval_df['Confidence_Label'],
+        categories=confidence_order,
+        ordered=True
+    )
+
     styled_eval = filtered_eval_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result', 'Confidence_Label', 'Actual_1st_Inning_Runs', 'Prediction_Result']].sort_values(by="Confidence_Label", ascending=True)
+
     st.dataframe(
         styled_eval.style.applymap(highlight_confidence, subset=["Confidence_Label"]),
         use_container_width=True
     )
+
+
 
 # ------------------------------
 # 📊 DAILY SUMMARY
