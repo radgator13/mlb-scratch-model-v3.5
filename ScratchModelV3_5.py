@@ -1,6 +1,7 @@
 ﻿import subprocess
 import datetime
 import os
+import pandas as pd
 
 # List of scripts to run DAILY (no retraining)
 scripts = [
