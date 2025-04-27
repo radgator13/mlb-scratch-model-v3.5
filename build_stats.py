@@ -22,7 +22,6 @@ away_batting['Scored'] = (
     > 0
 ).astype(int)
 
-
 home_batting = df[['Home Team', 'Home 1th']].copy()
 home_batting['Team'] = home_batting['Home Team']
 home_batting['Scored'] = (
@@ -38,8 +37,8 @@ batting_summary = batting.groupby('Team').agg(
     NRFI_Batting_Hits=('Scored', lambda x: (x == 0).sum())
 ).reset_index()
 
-batting_summary['NRFI_Batting_Rate'] = (batting_summary['NRFI_Batting_Hits'] / batting_summary['Games_Batted']) * 100
-batting_summary['NRFI_Batting_Rate'] = batting_summary['NRFI_Batting_Rate'].round(2)
+batting_summary['Away_NRFI_Batting_Rate'] = (batting_summary['NRFI_Batting_Hits'] / batting_summary['Games_Batted']) * 100
+batting_summary['Away_NRFI_Batting_Rate'] = batting_summary['Away_NRFI_Batting_Rate'].round(2)
 
 # -------------------------------
 # 🧠 3. Team NRFI Pitching Stats
@@ -60,6 +59,7 @@ home_pitching['Allowed'] = (
     .apply(lambda x: int(float(x)) if pd.notna(x) and x != "Pending" else 0)
     > 0
 ).astype(int)
+
 pitching = pd.concat([away_pitching[['Team', 'Allowed']], home_pitching[['Team', 'Allowed']]])
 
 pitching_summary = pitching.groupby('Team').agg(
@@ -67,27 +67,40 @@ pitching_summary = pitching.groupby('Team').agg(
     NRFI_Pitching_Hits=('Allowed', lambda x: (x == 0).sum())
 ).reset_index()
 
-pitching_summary['NRFI_Pitching_Rate'] = (pitching_summary['NRFI_Pitching_Hits'] / pitching_summary['Games_Pitched']) * 100
-pitching_summary['NRFI_Pitching_Rate'] = pitching_summary['NRFI_Pitching_Rate'].round(2)
+pitching_summary['Home_NRFI_Pitching_Rate'] = (pitching_summary['NRFI_Pitching_Hits'] / pitching_summary['Games_Pitched']) * 100
+pitching_summary['Home_NRFI_Pitching_Rate'] = pitching_summary['Home_NRFI_Pitching_Rate'].round(2)
 
-# Merge batting + pitching summaries
-team_nrfi = pd.merge(batting_summary, pitching_summary, on='Team')
+# -------------------------------
+# 🧠 4. Merge Batting + Pitching into Game Level
+# -------------------------------
 
-# Keep only useful columns
-team_nrfi = team_nrfi[['Team', 'NRFI_Batting_Rate', 'NRFI_Pitching_Rate']]
+# Create away team batting stats
+away_stats = batting_summary[['Team', 'Away_NRFI_Batting_Rate']].rename(columns={"Team": "Away Team"})
 
-# Calculate Overall NRFI Probability
-team_nrfi['NRFI_Overall_Probability'] = (team_nrfi['NRFI_Batting_Rate'] * team_nrfi['NRFI_Pitching_Rate']) / 100
-team_nrfi['NRFI_Overall_Probability'] = team_nrfi['NRFI_Overall_Probability'].round(2)
+# Create home team pitching stats
+home_stats = pitching_summary[['Team', 'Home_NRFI_Pitching_Rate']].rename(columns={"Team": "Home Team"})
 
-# Sort by best NRFI teams
-team_nrfi = team_nrfi.sort_values(by='NRFI_Overall_Probability', ascending=False)
+# Merge away batting rates
+df = df.merge(away_stats, on='Away Team', how='left')
 
-# Save to CSV
-team_nrfi.to_csv("data/team_nrfi_stats_pretty.csv", index=False)
-print(f"✅ Saved Sparkling NRFI Stats to: data/team_nrfi_stats_pretty.csv")
+# Merge home pitching rates
+df = df.merge(home_stats, on='Home Team', how='left')
+
+# -------------------------------
+# 🧠 5. Calculate Predicted NRFI Probability per game
+# -------------------------------
+
+df['Predicted_NRFI_Probability'] = (
+    df['Away_NRFI_Batting_Rate'] * df['Home_NRFI_Pitching_Rate'] / 100
+).round(2)
+
+# -------------------------------
+# ✅ 6. Save final output
+# -------------------------------
+
+df.to_csv("data/mlb_nrfi_predictions.csv", index=False)
+print("\n✅ Saved mlb_nrfi_predictions.csv with all features!")
 
 # Preview
-print("\n📊 Top Teams by NRFI Overall Probability:")
-print(team_nrfi.head(10))
-
+print("\n📊 Sample rows with predictions:")
+print(df[['Game Date', 'Away Team', 'Home Team', 'Predicted_NRFI_Probability']].head(10))
