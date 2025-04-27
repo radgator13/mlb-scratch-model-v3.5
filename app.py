@@ -1,6 +1,5 @@
 ﻿import streamlit as st
 import pandas as pd
-import joblib
 from datetime import datetime
 
 # Set Streamlit page config
@@ -15,14 +14,9 @@ def load_predictions():
 def load_results():
     return pd.read_csv("data/mlb_nrfi_results_full.csv")
 
-@st.cache_resource
-def load_model():
-    return joblib.load("model.pkl")
-
 # Load everything
 pred_df = load_predictions()
 results_df = load_results()
-model = load_model()
 
 # 🔥 Helper: Fireball Rating
 def assign_fireball(prob):
@@ -50,11 +44,6 @@ df = pred_df.merge(
     how='left'
 )
 
-# Predict using Logistic Regression model
-features = ['Predicted_NRFI_Probability', 'Away_NRFI_Batting_Rate', 'Home_NRFI_Pitching_Rate']
-df['Model_Prediction'] = model.predict(df[features])
-df['Model_Prediction_Result'] = df['Model_Prediction'].apply(lambda x: "✅ HIT" if x == 1 else "❌ MISS")
-
 # Only fill missing prediction results with "Pending"
 df['Prediction_Result'] = df['Prediction_Result'].fillna("Pending")
 
@@ -62,7 +51,7 @@ df['Prediction_Result'] = df['Prediction_Result'].fillna("Pending")
 evaluation_df = df[df['Actual_1st_Inning_Runs'] != "Pending"]
 
 # Title
-st.title("⚾ MLB NRFI Predictions Dashboard (Logistic Regression Model)")
+st.title("⚾ MLB NRFI Predictions Dashboard (Fireball Model Only)")
 
 # View selector
 view_option = st.radio("Select View:", ["Predictions Only", "Predictions vs Actual Results"])
@@ -89,7 +78,7 @@ filtered_eval_df = evaluation_df[evaluation_df['Game Date'] == selected_date_str
 if view_option == "Predictions Only":
     st.subheader(f"NRFI Predictions for {selected_date_str}")
     st.dataframe(
-        filtered_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result']]
+        filtered_df[['Away Team', 'Home Team', 'Fireball_Rating']]
         .sort_values(by="Fireball_Rating", ascending=False),
         use_container_width=True
     )
@@ -98,7 +87,7 @@ if view_option == "Predictions Only":
     best_bets = filtered_df[filtered_df['Predicted_NRFI_Probability'] >= 70]
     if not best_bets.empty:
         st.dataframe(
-            best_bets[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result']]
+            best_bets[['Away Team', 'Home Team', 'Fireball_Rating']]
             .sort_values(by="Fireball_Rating", ascending=False),
             use_container_width=True
         )
@@ -108,7 +97,7 @@ if view_option == "Predictions Only":
 elif view_option == "Predictions vs Actual Results":
     st.subheader(f"NRFI Predictions vs Actual for {selected_date_str}")
     st.dataframe(
-        filtered_eval_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Model_Prediction_Result', 'Actual_1st_Inning_Runs', 'Prediction_Result']]
+        filtered_eval_df[['Away Team', 'Home Team', 'Fireball_Rating', 'Actual_1st_Inning_Runs', 'Prediction_Result']]
         .sort_values(by="Fireball_Rating", ascending=False),
         use_container_width=True
     )
@@ -123,14 +112,14 @@ st.subheader("📈 Daily Summary for Selected Date")
 if view_option == "Predictions vs Actual Results":
 
     daily_total = len(filtered_eval_df)
-    daily_hits = (filtered_eval_df['Model_Prediction_Result'] == '✅ HIT').sum()
+    daily_hits = (filtered_eval_df['Prediction_Result'] == '✅ HIT').sum()
     daily_win_rate = (daily_hits / daily_total) * 100 if daily_total > 0 else 0
 
     st.write(f"**Daily Model Record:** {daily_hits} Wins / {daily_total - daily_hits} Losses ({daily_win_rate:.2f}% Win Rate)")
 
     fireball_daily = filtered_eval_df.groupby('Fireball_Rating').agg(
-        Total=('Model_Prediction_Result', 'count'),
-        Wins=('Model_Prediction_Result', lambda x: (x == '✅ HIT').sum())
+        Total=('Prediction_Result', 'count'),
+        Wins=('Prediction_Result', lambda x: (x == '✅ HIT').sum())
     )
     fireball_daily['Win %'] = (fireball_daily['Wins'] / fireball_daily['Total'] * 100).round(2)
 
@@ -152,14 +141,14 @@ st.subheader("📈 Cumulative Summary (All Days)")
 if view_option == "Predictions vs Actual Results":
 
     cumulative_total = len(evaluation_df)
-    cumulative_hits = (evaluation_df['Model_Prediction_Result'] == '✅ HIT').sum()
+    cumulative_hits = (evaluation_df['Prediction_Result'] == '✅ HIT').sum()
     cumulative_win_rate = (cumulative_hits / cumulative_total) * 100 if cumulative_total > 0 else 0
 
     st.write(f"**Cumulative Model Record:** {cumulative_hits} Wins / {cumulative_total - cumulative_hits} Losses ({cumulative_win_rate:.2f}% Win Rate)")
 
     fireball_cumulative = evaluation_df.groupby('Fireball_Rating').agg(
-        Total=('Model_Prediction_Result', 'count'),
-        Wins=('Model_Prediction_Result', lambda x: (x == '✅ HIT').sum())
+        Total=('Prediction_Result', 'count'),
+        Wins=('Prediction_Result', lambda x: (x == '✅ HIT').sum())
     )
     fireball_cumulative['Win %'] = (fireball_cumulative['Wins'] / fireball_cumulative['Total'] * 100).round(2)
 
@@ -172,4 +161,4 @@ if view_option == "Predictions vs Actual Results":
 
 # Footer
 st.markdown("---")
-st.caption("Created by ⚾ NRFI Analyzer 2025")
+st.caption("Created by ⚾ NRFI Analyzer 2025 (Fireball Model Only)")
