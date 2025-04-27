@@ -67,9 +67,19 @@ selected_date = st.date_input(
 
 selected_date_str = selected_date.strftime('%Y-%m-%d')
 
+# ✅ Fireball Confidence Toggle
+fireball_filter = st.checkbox("🔥 Show Only Fireballs 3, 4, and 5 (Higher-Confidence Picks)", value=False)
+
 # Filter by selected date
 filtered_df = df[df['Game Date'] == selected_date_str]
 filtered_eval_df = evaluation_df[evaluation_df['Game Date'] == selected_date_str]
+
+# ✅ Apply Fireball filter if checked
+if fireball_filter:
+    filtered_df = filtered_df[filtered_df['Fireball_Rating'].isin(["🔥🔥🔥", "🔥🔥🔥🔥", "🔥🔥🔥🔥🔥"])]
+    filtered_eval_df = filtered_eval_df[filtered_eval_df['Fireball_Rating'].isin(["🔥🔥🔥", "🔥🔥🔥🔥", "🔥🔥🔥🔥🔥"])]
+    evaluation_df = evaluation_df[evaluation_df['Fireball_Rating'].isin(["🔥🔥🔥", "🔥🔥🔥🔥", "🔥🔥🔥🔥🔥"])]
+
 
 # ------------------------------
 # 📋 Display Predictions
@@ -158,6 +168,25 @@ if view_option == "Predictions vs Actual Results":
     fireball_cumulative = fireball_cumulative.sort_values(by='SortOrder').drop(columns=['SortOrder']).set_index('Fireball_Rating')
 
     st.dataframe(fireball_cumulative, use_container_width=True)
+
+# ------------------------------
+# 🏆 Fireball Leaderboard
+# ------------------------------
+
+st.markdown("---")
+st.subheader("🏆 Fireball Leaderboard (Cumulative Performance)")
+
+fireball_leaderboard = evaluation_df.groupby('Fireball_Rating').agg(
+    Games=('Prediction_Result', 'count'),
+    Wins=('Prediction_Result', lambda x: (x == '✅ HIT').sum()),
+    Losses=('Prediction_Result', lambda x: (x == '❌ MISS').sum())
+).reset_index()
+
+fireball_leaderboard['Win %'] = (fireball_leaderboard['Wins'] / fireball_leaderboard['Games'] * 100).round(2)
+
+fireball_leaderboard = fireball_leaderboard.sort_values(by='Win %', ascending=False)
+
+st.dataframe(fireball_leaderboard, use_container_width=True)
 
 # Footer
 st.markdown("---")
