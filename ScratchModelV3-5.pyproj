@@ -11,6 +11,8 @@
     <OutputPath>.</OutputPath>
     <Name>ScratchModelV3-5</Name>
     <RootNamespace>ScratchModelV3-5</RootNamespace>
+    <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
+    <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +46,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="data\rotowire_projstarters.csv" />
+    <Content Include="README.md" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
