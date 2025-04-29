@@ -297,7 +297,7 @@ if view_option == "Predictions vs Actual Results":
         # ------------------------------
 
         st.markdown("---")
-        st.subheader("📈 Cumulative Win % Over Time (Target: 60%)")
+        st.subheader("📈 Cumulative Win % Over Time (Target: 55%)")
 
         cumulative_df_sorted = cumulative_df.sort_values('Game Date')
         cumulative_df_sorted['Game Date'] = pd.to_datetime(cumulative_df_sorted['Game Date'])
@@ -321,7 +321,7 @@ if view_option == "Predictions vs Actual Results":
         ax.plot(cumulative_df_sorted['Game Date'], cumulative_df_sorted['Smoothed Win %'], color=line_color, linewidth=3, label='Smoothed Win % (7 Games)')
 
         # Add 60% Target Line
-        ax.axhline(y=60, color='blue', linestyle='--', label='Target 60% Win Rate')
+        ax.axhline(y=55, color='blue', linestyle='--', label='Target 55% Win Rate')
 
         ax.set_xlabel('Game Date')
         ax.set_ylabel('Cumulative Win %')
