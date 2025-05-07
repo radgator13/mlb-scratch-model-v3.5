@@ -155,7 +155,8 @@ def scrape_range(start_date, end_date, output_file="data/mlb_boxscores_full.csv"
 
 if __name__ == "__main__":
     today = datetime.today()
-    start_date = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    #start_date = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    start_date = "2025-04-30"
     end_date = (today + timedelta(days=1)).strftime("%Y-%m-%d")
 
     print(f"🚀 Scraping boxscores for: {start_date} to {end_date}")

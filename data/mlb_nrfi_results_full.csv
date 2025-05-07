@@ -464,6 +464,32 @@ Game Date,Away Team,Home Team,Away_NRFI_Batting_Rate,Home_NRFI_Pitching_Rate,Pre
 2025-04-30,Kansas City Royals,Tampa Bay Rays,70.0,67.86,47.5,2,0,2,❌ MISS
 2025-04-30,Athletics,Texas Rangers,75.0,78.57,58.93,0,0,0,✅ HIT
 2025-04-30,Boston Red Sox,Toronto Blue Jays,65.62,66.67,43.75,2,0,2,❌ MISS
+2025-05-01,Milwaukee Brewers,Chicago White Sox,82.76,64.29,53.21,0,1,1,❌ MISS
+2025-05-01,St. Louis Cardinals,Cincinnati Reds,82.76,78.57,65.02,0,0,0,✅ HIT
+2025-05-01,Minnesota Twins,Cleveland Guardians,71.43,64.29,45.92,0,1,1,❌ MISS
+2025-05-01,Detroit Tigers,Los Angeles Angels,68.97,59.26,40.87,0,0,0,✅ HIT
+2025-05-01,Arizona Diamondbacks,New York Mets,64.29,89.29,57.4,0,0,0,✅ HIT
+2025-05-01,Washington Nationals,Philadelphia Phillies,68.97,78.57,54.19,0,0,0,✅ HIT
+2025-05-01,Chicago Cubs,Pittsburgh Pirates,74.07,86.21,63.86,0,1,1,❌ MISS
+2025-05-01,Colorado Rockies,San Francisco Giants,82.76,65.52,54.22,0,1,1,❌ MISS
+2025-05-01,Kansas City Royals,Tampa Bay Rays,70.0,67.86,47.5,0,1,1,❌ MISS
+2025-05-01,Athletics,Texas Rangers,75.0,78.57,58.93,1,0,1,❌ MISS
+2025-05-01,Boston Red Sox,Toronto Blue Jays,65.62,66.67,43.75,0,0,0,✅ HIT
+2025-05-02,Los Angeles Dodgers,Atlanta Braves,69.23,64.29,44.51,0,0,0,✅ HIT
+2025-05-02,Kansas City Royals,Baltimore Orioles,70.0,62.07,43.45,0,0,0,✅ HIT
+2025-05-02,Minnesota Twins,Boston Red Sox,71.43,62.5,44.64,0,1,1,❌ MISS
+2025-05-02,Houston Astros,Chicago White Sox,85.19,64.29,54.77,0,1,1,❌ MISS
+2025-05-02,Washington Nationals,Cincinnati Reds,68.97,78.57,54.19,0,2,2,❌ MISS
+2025-05-02,Detroit Tigers,Los Angeles Angels,68.97,59.26,40.87,0,1,1,❌ MISS
+2025-05-02,Athletics,Miami Marlins,75.0,75.0,56.25,0,0,0,✅ HIT
+2025-05-02,Chicago Cubs,Milwaukee Brewers,74.07,72.41,53.63,2,0,2,❌ MISS
+2025-05-02,Tampa Bay Rays,New York Yankees,78.57,82.76,65.02,0,0,0,✅ HIT
+2025-05-02,Arizona Diamondbacks,Philadelphia Phillies,64.29,78.57,50.51,0,1,1,❌ MISS
+2025-05-02,San Diego Padres,Pittsburgh Pirates,64.29,86.21,55.42,0,0,0,✅ HIT
+2025-05-02,Colorado Rockies,San Francisco Giants,82.76,65.52,54.22,0,0,0,✅ HIT
+2025-05-02,New York Mets,St. Louis Cardinals,75.0,72.41,54.31,0,1,1,❌ MISS
+2025-05-02,Seattle Mariners,Texas Rangers,64.29,78.57,50.51,0,0,0,✅ HIT
+2025-05-02,Cleveland Guardians,Toronto Blue Jays,71.43,66.67,47.62,0,0,0,✅ HIT
 2025-05-03,Los Angeles Dodgers,Atlanta Braves,69.23,64.29,44.51,0,0,0,✅ HIT
 2025-05-03,Kansas City Royals,Baltimore Orioles,70.0,62.07,43.45,0,0,0,✅ HIT
 2025-05-03,Minnesota Twins,Boston Red Sox,71.43,62.5,44.64,0,0,0,✅ HIT
@@ -495,6 +521,16 @@ Game Date,Away Team,Home Team,Away_NRFI_Batting_Rate,Home_NRFI_Pitching_Rate,Pre
 2025-05-04,New York Mets,St. Louis Cardinals,75.0,72.41,54.31,0,0,0,✅ HIT
 2025-05-04,Seattle Mariners,Texas Rangers,64.29,78.57,50.51,0,0,0,✅ HIT
 2025-05-04,Cleveland Guardians,Toronto Blue Jays,71.43,66.67,47.62,0,0,0,✅ HIT
+2025-05-05,New York Mets,Arizona Diamondbacks,75.0,64.29,48.22,0,1,1,❌ MISS
+2025-05-05,Seattle Mariners,Athletics,64.29,64.29,41.33,0,1,1,❌ MISS
+2025-05-05,Cincinnati Reds,Atlanta Braves,71.43,64.29,45.92,0,0,0,✅ HIT
+2025-05-05,San Francisco Giants,Chicago Cubs,75.86,77.78,59.0,0,0,0,✅ HIT
+2025-05-05,Chicago White Sox,Kansas City Royals,64.29,93.33,60.0,0,0,0,✅ HIT
+2025-05-05,Los Angeles Dodgers,Miami Marlins,69.23,75.0,51.92,1,0,1,❌ MISS
+2025-05-05,Houston Astros,Milwaukee Brewers,85.19,72.41,61.69,0,0,0,✅ HIT
+2025-05-05,San Diego Padres,New York Yankees,64.29,82.76,53.21,0,0,0,✅ HIT
+2025-05-05,Pittsburgh Pirates,St. Louis Cardinals,75.86,72.41,54.93,2,0,2,❌ MISS
+2025-05-05,Cleveland Guardians,Washington Nationals,71.43,79.31,56.65,,,0,✅ HIT
 2025-05-06,New York Mets,Arizona Diamondbacks,75.0,64.29,48.22,0,0,0,✅ HIT
 2025-05-06,Seattle Mariners,Athletics,64.29,64.29,41.33,1,1,2,❌ MISS
 2025-05-06,Cincinnati Reds,Atlanta Braves,71.43,64.29,45.92,0,0,0,✅ HIT
