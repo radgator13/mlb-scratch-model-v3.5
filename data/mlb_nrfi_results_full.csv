@@ -562,3 +562,32 @@ Game Date,Away Team,Home Team,Away_NRFI_Batting_Rate,Home_NRFI_Pitching_Rate,Pre
 2025-05-07,Pittsburgh Pirates,St. Louis Cardinals,75.86,72.41,54.93,0,0,0,✅ HIT
 2025-05-07,Philadelphia Phillies,Tampa Bay Rays,67.86,67.86,46.05,0,0,0,✅ HIT
 2025-05-07,Cleveland Guardians,Washington Nationals,71.43,79.31,56.65,0,0,0,✅ HIT
+2025-05-10,Los Angeles Dodgers,Arizona Diamondbacks,69.23,64.29,44.51,0,0,0,✅ HIT
+2025-05-10,New York Yankees,Athletics,58.62,64.29,37.69,0,0,0,✅ HIT
+2025-05-10,Miami Marlins,Chicago White Sox,75.0,64.29,48.22,0,1,1,❌ MISS
+2025-05-10,Philadelphia Phillies,Cleveland Guardians,67.86,64.29,43.63,0,0,0,✅ HIT
+2025-05-10,San Diego Padres,Colorado Rockies,64.29,65.52,42.12,5,0,5,❌ MISS
+2025-05-10,Texas Rangers,Detroit Tigers,71.43,79.31,56.65,2,1,3,❌ MISS
+2025-05-10,Cincinnati Reds,Houston Astros,71.43,74.07,52.91,10,1,11,❌ MISS
+2025-05-10,Boston Red Sox,Kansas City Royals,65.62,93.33,61.24,0,0,0,✅ HIT
+2025-05-10,Baltimore Orioles,Los Angeles Angels,65.52,59.26,38.83,0,2,2,❌ MISS
+2025-05-10,San Francisco Giants,Minnesota Twins,75.86,60.71,46.05,0,0,0,✅ HIT
+2025-05-10,Chicago Cubs,New York Mets,74.07,89.29,66.14,2,0,2,❌ MISS
+2025-05-10,Atlanta Braves,Pittsburgh Pirates,71.43,86.21,61.58,0,0,0,✅ HIT
+2025-05-10,Toronto Blue Jays,Seattle Mariners,76.67,67.86,52.03,0,0,0,✅ HIT
+2025-05-10,Milwaukee Brewers,Tampa Bay Rays,82.76,67.86,56.16,0,0,0,✅ HIT
+2025-05-10,St. Louis Cardinals,Washington Nationals,82.76,79.31,65.64,0,0,0,✅ HIT
+2025-05-11,Los Angeles Dodgers,Arizona Diamondbacks,69.23,64.29,44.51,1,0,1,❌ MISS
+2025-05-11,New York Yankees,Athletics,58.62,64.29,37.69,0,0,0,✅ HIT
+2025-05-11,Miami Marlins,Chicago White Sox,75.0,64.29,48.22,0,0,0,✅ HIT
+2025-05-11,San Diego Padres,Colorado Rockies,64.29,65.52,42.12,1,3,4,❌ MISS
+2025-05-11,Texas Rangers,Detroit Tigers,71.43,79.31,56.65,0,0,0,✅ HIT
+2025-05-11,Cincinnati Reds,Houston Astros,71.43,74.07,52.91,0,0,0,✅ HIT
+2025-05-11,Boston Red Sox,Kansas City Royals,65.62,93.33,61.24,0,0,0,✅ HIT
+2025-05-11,Baltimore Orioles,Los Angeles Angels,65.52,59.26,38.83,1,2,3,❌ MISS
+2025-05-11,San Francisco Giants,Minnesota Twins,75.86,60.71,46.05,1,0,1,❌ MISS
+2025-05-11,Chicago Cubs,New York Mets,74.07,89.29,66.14,0,0,0,✅ HIT
+2025-05-11,Atlanta Braves,Pittsburgh Pirates,71.43,86.21,61.58,0,0,0,✅ HIT
+2025-05-11,Toronto Blue Jays,Seattle Mariners,76.67,67.86,52.03,0,0,0,✅ HIT
+2025-05-11,Milwaukee Brewers,Tampa Bay Rays,82.76,67.86,56.16,0,1,1,❌ MISS
+2025-05-11,St. Louis Cardinals,Washington Nationals,82.76,79.31,65.64,1,0,1,❌ MISS
